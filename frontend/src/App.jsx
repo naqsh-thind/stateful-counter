@@ -1,17 +1,27 @@
 import { useState, useEffect } from 'react'
 import './App.css'
+import { saveCounter, loadCounter } from './services/storageService'
 
 function App() {
   // Initialize count from localStorage, or default to 0
-  const [count, setCount] = useState(() => {
+  const [count, setCount] = useState(() => loadCounter())
+
+
+  /*const [count, setCount] = useState(() => {
     const savedCount = localStorage.getItem('counterValue')
     return savedCount !== null ? parseInt(savedCount) : 0
   })
+  */
 
   // Save to localStorage whenever count changes
   useEffect(() => {
+    saveCounter(count)
+  }, [count])
+  
+  /*useEffect(() => {
     localStorage.setItem('counterValue', count)
   }, [count])
+  */
 
   const handleIncrement = () => {
     setCount(count + 1)
