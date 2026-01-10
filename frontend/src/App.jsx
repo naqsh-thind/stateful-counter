@@ -3,25 +3,27 @@ import './App.css'
 import { saveCounter, loadCounter } from './services/storageService'
 
 function App() {
-  // Initialize count from localStorage, or default to 0
-  const [count, setCount] = useState(() => loadCounter())
+  const [count, setCount] = useState(0)
+  const [loading, setLoading] = useState(true)
 
-
-  /*const [count, setCount] = useState(() => {
-    const savedCount = localStorage.getItem('counterValue')
-    return savedCount !== null ? parseInt(savedCount) : 0
-  })
-  */
-
-  // Save to localStorage whenever count changes
+  // Load initial counter value from backend when component mounts
   useEffect(() => {
-    saveCounter(count)
-  }, [count])
-  
-  /*useEffect(() => {
-    localStorage.setItem('counterValue', count)
-  }, [count])
-  */
+    const fetchCounter = async () => {
+      setLoading(true)
+      const value = await loadCounter()
+      setCount(value)
+      setLoading(false)
+    }
+    
+    fetchCounter()
+  }, [])  // Empty array means this runs once on mount
+
+  // Save counter to backend whenever it changes
+  useEffect(() => {
+    if (!loading) {  // Don't save during initial load
+      saveCounter(count)
+    }
+  }, [count, loading])
 
   const handleIncrement = () => {
     setCount(count + 1)
@@ -33,6 +35,15 @@ function App() {
 
   const handleReset = () => {
     setCount(0)
+  }
+
+  if (loading) {
+    return (
+      <div className="App">
+        <h1>Stateful Counter</h1>
+        <p>Loading...</p>
+      </div>
+    )
   }
 
   return (

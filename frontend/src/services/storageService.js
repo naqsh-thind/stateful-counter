@@ -1,22 +1,43 @@
-// Storage service to handle localStorage operations
-// This will be replaced with API calls later
+// API service to interact with the backend
+// Base URL for your backend API
+const API_URL = 'http://localhost:5001/api/counter';
 
-export const saveCounter = (value) => {
+// Fetch the current counter value from the backend
+export const loadCounter = async () => {
   try {
-    localStorage.setItem('counterValue', value.toString())
-    return true
+    const response = await fetch(API_URL);
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch counter');
+    }
+    
+    const data = await response.json();
+    return data.value;
   } catch (error) {
-    console.error('Error saving counter:', error)
-    return false
+    console.error('Error loading counter:', error);
+    return 0;  // Return 0 as fallback if API fails
   }
-}
+};
 
-export const loadCounter = () => {
+// Save the counter value to the backend
+export const saveCounter = async (value) => {
   try {
-    const savedValue = localStorage.getItem('counterValue')
-    return savedValue !== null ? parseInt(savedValue) : 0
+    const response = await fetch(API_URL, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ value }),
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to save counter');
+    }
+    
+    const data = await response.json();
+    return true;
   } catch (error) {
-    console.error('Error loading counter:', error)
-    return 0
+    console.error('Error saving counter:', error);
+    return false;
   }
-}
+};
