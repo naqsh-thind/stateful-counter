@@ -1,6 +1,6 @@
 // API service to interact with the backend
 // Base URL for your backend API
-const API_URL = 'http://localhost:5001/api/counter';
+const API_URL = '/api/counter';
 
 // Fetch the current counter value from the backend
 export const loadCounter = async () => {
